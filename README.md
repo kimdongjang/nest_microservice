@@ -48,3 +48,9 @@ curl -X POST http://localhost:3000/product -H "Content-Type: application/json" -
 2. .proto를 사용한 grpc통신 방식으로 ProductServiceClient의 createProduct를 호출, Product-Service서버에 정보 전달(이때 파라미터는 HTTP측은 CreateProductRequest 타입으로, .proto에 의해 생겨난 인터페이스다.)
 3. Product-Service 서버의 컨트롤러에서 @GrpcMethod 데코레이터를 사용해 게이트웨이 측의 통신 요청을 인식함(payload로 받은 파라미터는 DTO 객체로 파라미터가 유효한지 확인한다)
 4. Product-Service에서 createProduct() 함수 호출, Product 데이터를 저장한다
+
+
+### Order
+```
+curl -X POST http://localhost:3000/order -H "Content-Type: application/json" -d '{"productId": 1, "quantity": 1}'
+```
