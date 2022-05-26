@@ -22,7 +22,7 @@ export class JwtService {
 
   // 디코딩된 데이터에서 유저 아이디를 통해 유저를 가져옴
   public async validateUser(decoded: any): Promise<Auth> {
-    return this.authRepository.findOne(decoded.id);
+    return this.authRepository.findOne({ where: { id: decoded.id } });
   }
 
   // 아이디와 이메일을 통해 jwt token을 실행함
@@ -38,8 +38,9 @@ export class JwtService {
   // 유저 패스워드를 인코딩함
   public encodePassword(password: string): string {
     const salt: string = bcrypt.genSaltSync(10);
-    return bcrypt.hashSynnc(password, salt);
+    return bcrypt.hashSync(password, salt);
   }
+
   public async verify(token: string): Promise<any> {
     try {
       return this.jwt.verify(token);

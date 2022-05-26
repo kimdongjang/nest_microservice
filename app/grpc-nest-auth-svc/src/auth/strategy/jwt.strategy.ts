@@ -18,6 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   private validate(token: string): Promise<Auth | never> {
+    console.log('jwt strategy ' + token);
     return this.jwtService.validateUser(token);
   }
 }
