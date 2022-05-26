@@ -12,6 +12,16 @@
 proto : Shared Proto Repository  
 
 
+## 역할
+**API Gateway** : 외부로 노출되어 있는 서비스. 사용자가 이용할 수 있는 모든 서비스에 대해 Validate하고 서비스를 실행하는 주체로 요청을 전달하며, 결과값을 리턴해준다.
+**Auth** : 회원가입, 로그인 시 jwt토큰을 발급해줌. jwt토큰이 유효한지 확인하는 서비스를 제공.
+**Product** : 상품 생성과 상품 검색 기능을 제공
+**Order** : 주문을 생성
+
+
+
+
+
 ## 기능
 ### Register  
 ```
@@ -23,6 +33,10 @@ curl -X POST http://localhost:3000/auth/register -H "Content-Type: application/j
 4. Auth-Service 서버에서 auth.service.ts 내부의 register() 함수 호출, 중복된 이메일이 있는지 확인하고 패스워드를 인코딩, 유저 정보를 저장, HttpStatus 결과 리턴  
 #### Login, Validate 기능 모두 동일한 로직으로 작동한다.  
 
+
+### AuthGuard
+1. api gateway 측에서 정의한다. 회원가입과 같은 Auth 서비스의 기능을 제외하고 Product, Order와 같이 로그인을 한 이후에 이용할 수 있는 기능들에 대해 사용자가 요청을 할 경우 요청한 주체가 검증된 주체인지 확인한다.
+2. Auth Guard는 canActive 인터페이스를 구현하여 jwt토큰을 검증하는데, Auth Service에서 구현한 jwtService를 이용해 validate하고 결과를 ValidateResponse로 받아 리턴한다. 
 
 
 
