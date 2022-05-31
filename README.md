@@ -17,6 +17,46 @@ proto : Shared Proto Repository
 **Auth** : 회원가입, 로그인 시 jwt토큰을 발급해줌. jwt토큰이 유효한지 확인하는 서비스를 제공.  
 **Product** : 상품 생성과 상품 검색 기능을 제공  
 **Order** : 주문을 생성  
+  
+
+## 통신
+### gRPC 로직
+1. .proto에 Route Handler에 요청할 Request, 각 서비스에서 처리 후 반환할 Response를 정의
+```js
+// Register
+message RegisterRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message RegisterResponse {
+  int32 status = 1;
+  repeated string error = 2;
+}
+```
+2. gRPC를 통해 서비스할 서비스를 rpc 타입으로 정의(package는 auth, order, product 등으로 정의)
+```js
+service AuthService {
+  rpc Register (RegisterRequest) returns (RegisterResponse) {}
+  rpc Login (LoginRequest) returns (LoginResponse) {}
+  rpc Validate (ValidateRequest) returns (ValidateResponse) {}
+}
+```
+3. protoc로 컴파일해서 각 서비스에 .proto 파일을 auth.pb.ts로 생성
+4. Api gateway에서 auth.pb.ts에 생성된 AuthServiceClient를 ```onModuleInit()```에서 초기화함.
+```js
+export class AuthController implements OnModuleInit {
+  private svc: AuthServiceClient;
+  @Inject(AUTH_SERVICE_NAME)
+  private readonly client: ClientGrpc;
+
+  onModuleInit(): void {
+    this.svc = this.client.getService<AuthServiceClient>(AUTH_SERVICE_NAME);
+  }
+}
+```
+5. Api gateway에서 gRPC에서 정의한 각 서비스를 호출하면 gRPC와 연결된 서비스로 요청이 전달되며 gRPC 서비스 측에서는 ```@GrpcMethod()```데코레이터를 통해 전달된 요청을 받는다. 후에 service측에서 서비스를 처리하고 gRPC에서 정의한 response를 돌려준다.  
+  
 
 
 
